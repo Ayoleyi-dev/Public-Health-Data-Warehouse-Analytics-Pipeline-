@@ -66,9 +66,24 @@ Instead of static inserts, I used SQL loops and randomization functions to popul
   * **Randomization:** Used `FLOOR(RAND(CHECKSUM(NEWID())))` to generate varied age and weight distributions.
   * **Logic:** Used `CHOOSE()` to randomly assign names and cities from a predefined list, simulating diverse patient demographics.
   * **Data Cleaning:** Implemented `UPDATE` scripts to handle null values and backfill missing demographic data for legacy records.
+### 🔧 Challenges & Resolutions
+**Issue:** The synthetic data generator initially created null values due to an index mismatch in the `CHOOSE()` function.
+**Resolution:** I implemented a dynamic sizing logic to ensure the random index always matched the array length.
 
+**Code Snippet (Data Generation Logic):**
+```sql
+-- Dynamic Patient Generation Loop
+WHILE @Counter <= 100
+BEGIN
+    INSERT INTO Patients ([Age], [Weight])
+    VALUES (
+        FLOOR(RAND(CHECKSUM(NEWID())) * 85) + 1, -- Generates Age 1-85
+        CAST((RAND(CHECKSUM(NEWID())) * 68) + 2 AS DECIMAL(5,2)) -- Generates Weight
+    );
+    SET @Counter = @Counter + 1;
+END;
 -----
-
+```
 ## Key Insights & Visualizations
 
 **Dashboard Tool:** Power BI
